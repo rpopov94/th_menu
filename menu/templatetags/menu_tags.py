@@ -1,7 +1,7 @@
 from django import template
-from menu.models import MenuItem
-from django.utils.safestring import mark_safe
 from django.core.cache import cache
+from django.utils.safestring import mark_safe
+from menu.models import MenuItem
 
 register = template.Library()
 
@@ -11,11 +11,11 @@ def draw_menu(context, menu_name):
     current_url = request.path
 
     cache_key = f'menu_{menu_name}'
-    menu_html = cache.get(cache_key)
-    if menu_html is not None:
-        return mark_safe(menu_html)
-    
-    menu_items = MenuItem.objects.filter(parent=None).prefetch_related('children')
+    menu_items = cache.get(cache_key)
+    if menu_items is None:
+        menu_items = list(MenuItem.objects.filter(parent=None).prefetch_related('children'))
+        cache.set(cache_key, menu_items)
+
     menu_html = ''
 
     for item in menu_items:
@@ -38,6 +38,5 @@ def draw_menu(context, menu_name):
 
         menu_html += '</li>'
 
-    cache.set(cache_key, menu_html)
-
     return mark_safe(menu_html)
+

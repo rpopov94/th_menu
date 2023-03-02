@@ -1,13 +1,16 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <meta charset="UTF-8">
     <title>My Page</title>
+   
 </head>
 <body>
     <header>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
         {% load menu_tags %}
-        {% draw_menu 'Secondary_Menu'|safe %}
+        {% draw_menu 'Secondary_Menu'%}
     </header>
 </body>
 </html>
