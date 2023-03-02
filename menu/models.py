@@ -1,11 +1,12 @@
 from django.db import models
 
-
 class MenuItem(models.Model):
-    name = models.CharField(max_length=255)
-    url = models.CharField(max_length=255, blank=True)
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='children')
+    display_name = models.CharField(max_length=100)
+    url = models.CharField(max_length=100, blank=True)
+    order = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.name
+        return self.display_name
 

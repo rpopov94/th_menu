@@ -1,5 +1,5 @@
 """
-ASGI config for th_menu project.
+ASGI config for three_menu project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'th_menu.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'three_menu.settings')
 
 application = get_asgi_application()
