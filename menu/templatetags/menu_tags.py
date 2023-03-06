@@ -28,23 +28,5 @@ def render_menu(menu_items, current_url):
 def draw_menu(context, menu_name):
     request = context['request']
     current_url = request.path
-    menu_items = MenuItem.objects.select_related('parent').filter(name=menu_name).order_by('parent_id', 'order')
-    menu_item_dict = {}
-    root_items = []
-    for item in menu_items:
-        if item.parent is None:
-            root_items.append(item)
-        else:
-            if item.parent_id in menu_item_dict:
-                menu_item_dict[item.parent_id].children.append(item)
-            else:
-                parent = item.parent
-                parent.children = [item]
-                menu_item_dict[parent.id] = parent
-
-    menu_items = root_items
-    for item in menu_items:
-        if item.id in menu_item_dict:
-            item.children = menu_item_dict[item.id].children
-
+    menu_items = MenuItem.objects.filter(name=menu_name).prefetch_related('children')
     return render_menu(menu_items, current_url)
