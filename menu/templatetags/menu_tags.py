@@ -1,7 +1,9 @@
 from django import template
 from django.utils.safestring import mark_safe
 from menu.models import MenuItem
-from django.urls import reverse
+
+
+register = template.Library()
 
 def render_menu(menu_items, current_url):
     menu_html = '<ul>'
@@ -20,7 +22,7 @@ def render_menu(menu_items, current_url):
 
     return mark_safe(menu_html)
 
-register = template.Library()
+
 
 @register.simple_tag(takes_context=True)
 def draw_menu(context, menu_name):
