@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 {% load static %}
+{% load menu_tags %}
 <html>
 <head>
     <meta charset="UTF-8">
     <title>My Page</title>
-   
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>   
 </head>
 <body>
     <header>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
-        {% load menu_tags %}
+        
         {% draw_menu 'Home' %}
         {% draw_menu 'Info' %}
     </header>

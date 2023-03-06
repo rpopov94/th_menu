@@ -1,8 +1,7 @@
 from django import template
 from django.utils.safestring import mark_safe
 from menu.models import MenuItem
-
-register = template.Library()
+from django.urls import reverse
 
 def render_menu(menu_items, current_url):
     menu_html = '<ul>'
@@ -13,7 +12,7 @@ def render_menu(menu_items, current_url):
         else:
             menu_html += '<a href="{}">{}</a>'.format(item.url, item.name)
 
-        if item.children.all():
+        if item.children.exists():
             menu_html += render_menu(item.children.all(), current_url)
 
         menu_html += '</li>'
@@ -21,9 +20,29 @@ def render_menu(menu_items, current_url):
 
     return mark_safe(menu_html)
 
+register = template.Library()
+
 @register.simple_tag(takes_context=True)
 def draw_menu(context, menu_name):
     request = context['request']
     current_url = request.path
-    menu_items = MenuItem.objects.filter(name=menu_name).prefetch_related('children')
+    menu_items = MenuItem.objects.select_related('parent').filter(name=menu_name).order_by('parent_id', 'order')
+    menu_item_dict = {}
+    root_items = []
+    for item in menu_items:
+        if item.parent is None:
+            root_items.append(item)
+        else:
+            if item.parent_id in menu_item_dict:
+                menu_item_dict[item.parent_id].children.append(item)
+            else:
+                parent = item.parent
+                parent.children = [item]
+                menu_item_dict[parent.id] = parent
+
+    menu_items = root_items
+    for item in menu_items:
+        if item.id in menu_item_dict:
+            item.children = menu_item_dict[item.id].children
+
     return render_menu(menu_items, current_url)
