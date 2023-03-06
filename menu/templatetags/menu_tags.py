@@ -1,5 +1,4 @@
 from django import template
-from django.core.cache import cache
 from django.utils.safestring import mark_safe
 from menu.models import MenuItem
 
@@ -26,10 +25,5 @@ def render_menu(menu_items, current_url):
 def draw_menu(context, menu_name):
     request = context['request']
     current_url = request.path
-
-    cache_key = f'menu_{menu_name}'
-    menu_items = cache.get(cache_key)
-    if menu_items is None:
-        menu_items = list(MenuItem.objects.filter(parent=None).prefetch_related('children'))
-        cache.set(cache_key, menu_items)
+    menu_items = MenuItem.objects.filter(name=menu_name).prefetch_related('children')
     return render_menu(menu_items, current_url)
